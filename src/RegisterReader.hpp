@@ -12,6 +12,9 @@ namespace SensorProject
 
         void ReadRegisters();
     private:
+
+        void SerializeRegisters();
+        
         std::shared_ptr<std::vector<LogRecord>> m_SharedBuffer;
         std::shared_ptr<std::mutex> m_SharedMutex;
         std::string m_SensorID;

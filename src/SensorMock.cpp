@@ -37,7 +37,7 @@ void SensorProject::SensorMock::GenRandomLog()
     std::random_device rd;
     std::mt19937_64 mt(rd());
     std::uniform_real_distribution<double> dist(-1.0, 1.0);
-    m_CurrentLog.timestamp = std::chrono::steady_clock::now();
+    m_CurrentLog.timestamp = std::chrono::system_clock::now();
     m_CurrentLog.value = (dist(mt) * m_SensorAmplitude) + m_SensorOffset;
 }
 
@@ -48,6 +48,6 @@ void SensorProject::SensorMock::RecordLog()
     m_SharedMutex->unlock();
     //m_Logger->seekp(0, std::ios_base::end);
     m_Logger->write((char *)m_CurrentLog.sensor_id.c_str(), 32);
-    m_Logger->write((char *)&m_CurrentLog.timestamp, sizeof(std::chrono::steady_clock::time_point));
+    m_Logger->write((char *)&m_CurrentLog.timestamp, sizeof(std::chrono::system_clock::time_point));
     m_Logger->write((char *)&m_CurrentLog.value, sizeof(double));
 }

@@ -10,7 +10,7 @@ namespace SensorProject
 {
     struct LogRecord {
         const std::string sensor_id; // supondo um ID de sensor de até 32 caracteres
-        std::chrono::steady_clock::time_point timestamp; // timestamp UNIX
+        std::chrono::system_clock::time_point timestamp; // timestamp UNIX
         double value; // valor da leitura
         LogRecord(std::string_view id):
             sensor_id(id)
