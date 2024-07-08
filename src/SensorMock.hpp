@@ -4,6 +4,7 @@
 #include <fstream>
 #include <mutex>
 #include <memory>
+#include <vector>
 
 namespace SensorProject
 {
@@ -21,7 +22,7 @@ namespace SensorProject
     class SensorMock
     {
     public:
-        SensorMock(std::string_view sensorID, size_t sensorPause, double sensorRange, double sensorOffset, std::shared_ptr<std::fstream> logFile, std::shared_ptr<std::mutex> sharedMutex);
+        SensorMock(std::string_view sensorID, size_t sensorPause, double sensorRange, double sensorOffset, std::shared_ptr<std::vector<LogRecord>> sharedBuffer, std::shared_ptr<std::mutex> sharedMutex);
         ~SensorMock() = default;
 
         void SimSensor();
@@ -29,7 +30,8 @@ namespace SensorProject
 
         LogRecord m_CurrentLog;
         size_t m_SensorPause;
-        std::shared_ptr<std::fstream> m_Logger;
+        std::unique_ptr<std::fstream> m_Logger;
+        std::shared_ptr<std::vector<LogRecord>> m_SharedBuffer;
         std::shared_ptr<std::mutex> m_SharedMutex;
         double m_SensorAmplitude;
         double m_SensorOffset;
