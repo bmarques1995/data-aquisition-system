@@ -8,7 +8,7 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/debug/das",
-        "args": ["ipv6", "8080"],
+        "args": ["8000"],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
         "environment": [],

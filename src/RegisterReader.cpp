@@ -3,8 +3,38 @@
 #include <sstream>
 #include <iomanip>
 
-SensorProject::RegisterReader::RegisterReader(std::shared_ptr<std::vector<LogRecord>> sharedBuffer, std::shared_ptr<std::mutex> sharedMutex, std::string_view sensorID) :
-    m_SharedBuffer(sharedBuffer), m_SharedMutex(sharedMutex), m_SensorID(sensorID)
+SensorProject::RegisterReader::Session::Session(tcp::socket socket)
+            : socket_(std::move(socket)) {}
+
+void SensorProject::RegisterReader::Session::Start()
+{
+    Read();
+}
+
+void SensorProject::RegisterReader::Session::Read()
+{
+    auto self(shared_from_this());
+    socket_.async_read_some(boost::asio::buffer(data_, max_length),
+        [this, self](boost::system::error_code ec, std::size_t length) {
+            if (!ec) {
+                Write(length);
+            }
+        });
+}
+
+void SensorProject::RegisterReader::Session::Write(std::size_t length)
+{
+    auto self(shared_from_this());
+    boost::asio::async_write(socket_, boost::asio::buffer(data_, length),
+        [this, self](boost::system::error_code ec, std::size_t /*length*/) {
+            if (!ec) {
+                Read();
+            }
+        });
+}
+
+SensorProject::RegisterReader::RegisterReader(std::shared_ptr<std::vector<LogRecord>> sharedBuffer, std::shared_ptr<std::mutex> sharedMutex, std::string_view sensorID, boost::asio::io_context& ioContext, uint16_t port) :
+    m_SharedBuffer(sharedBuffer), m_SharedMutex(sharedMutex), m_SensorID(sensorID), m_Acceptor(ioContext, tcp::endpoint(tcp::v4(), port))
 {
 
 }
@@ -49,5 +79,4 @@ void SensorProject::RegisterReader::SerializeRegisters()
     }
     m_PrivateBuffer.clear();
     std::string castedRegister = streamBuffer.str();
-    std::cout << castedRegister;
 }

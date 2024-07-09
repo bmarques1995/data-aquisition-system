@@ -21,7 +21,6 @@ void SensorProject::SensorMock::SimSensor()
         auto recordStart = std::chrono::steady_clock::now();
         GenRandomLog();
         RecordLog();
-        std::cout << "Log written\n";
         auto recordEnd = std::chrono::steady_clock::now();
         int64_t timeEllapsed = std::chrono::duration_cast<std::chrono::milliseconds>(recordEnd - recordStart).count();
         while((double)timeEllapsed < (double)(m_SensorPause * 1e3))
